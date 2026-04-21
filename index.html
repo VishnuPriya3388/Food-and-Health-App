@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vitality | AI Food & Health</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Authentication Screen -->
+    <div id="auth-container" class="auth-wrapper">
+        <div class="auth-card glass-card">
+            <div class="auth-header">
+                <i class="fa-solid fa-leaf auth-logo-icon"></i>
+                <h2>Vitality</h2>
+                <p>Your personal AI health companion</p>
+            </div>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="tab-login">Login</button>
+                <button class="auth-tab" id="tab-signup">Sign Up</button>
+            </div>
+
+            <form id="auth-form" class="auth-form">
+                <div class="form-group" id="name-group" style="display: none;">
+                    <label>Full Name</label>
+                    <div class="input-icon-wrap">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="auth-name" placeholder="John Doe">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <div class="input-icon-wrap">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="email" id="auth-email" placeholder="you@example.com" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="input-icon-wrap">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="auth-password" placeholder="••••••••" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary full-width" id="auth-submit-btn">Enter Dashboard</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Application Container -->
+    <div id="app-container" class="app-container hidden">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-leaf text-gradient"></i>
+                <span class="text-gradient">Vitality</span>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-target="view-dashboard"><i class="fa-solid fa-house"></i> <span>Dashboard</span></li>
+                <li data-target="view-meals"><i class="fa-solid fa-utensils"></i> <span>Meals</span></li>
+                <li data-target="view-hydration"><i class="fa-solid fa-glass-water"></i> <span>Hydration</span></li>
+                <li data-target="view-bmi"><i class="fa-solid fa-weight-scale"></i> <span>BMI Calculator</span></li>
+                <li data-target="view-ai"><i class="fa-solid fa-robot"></i> <span>AI Analysis</span></li>
+            </ul>
+            <div class="user-profile">
+                <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" alt="User" id="user-avatar">
+                <div class="user-info">
+                    <h4 id="user-display-name">Alex</h4>
+                    <p>Level 12 <span class="logout-btn" id="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></span></p>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            
+            <!-- View: Dashboard -->
+            <section id="view-dashboard" class="app-view active-view">
+                <header class="top-bar">
+                    <div class="greeting">
+                        <h1 id="greeting-text">Good Morning, Alex</h1>
+                        <p>Here is your daily summary and overview.</p>
+                    </div>
+                    <button class="btn-primary log-meal-btn-global">
+                        <i class="fa-solid fa-plus"></i> Quick Log
+                    </button>
+                </header>
+
+                <div class="dashboard-grid">
+                    <!-- Daily Summary Card -->
+                    <div class="glass-card status-card">
+                        <h3>Daily Summary</h3>
+                        <div class="status-display">
+                            <div class="status-icon" id="status-icon">
+                                <i class="fa-solid fa-heart-pulse"></i>
+                            </div>
+                            <div class="status-info">
+                                <h2 id="overall-status-text">Good</h2>
+                                <p id="overall-status-desc">Health Score</p>
+                            </div>
+                        </div>
+                        <div class="status-metrics">
+                            <div class="s-metric"><span><i class="fa-solid fa-fire" style="color:var(--accent-protein)"></i> <span id="dash-cals">0</span></span> Calories</div>
+                            <div class="s-metric"><span><i class="fa-solid fa-droplet" style="color:var(--accent-water)"></i> <span id="dash-water">0</span></span> Glasses</div>
+                        </div>
+                    </div>
+
+                    <!-- Mini Meals List -->
+                    <div class="glass-card recent-meals-card" style="grid-column: span 2;">
+                        <h3>Today's Meals</h3>
+                        <div class="meal-list-header mini-header">
+                            <span>Meal</span>
+                            <span>Calories</span>
+                            <span>Health Status</span>
+                        </div>
+                        <ul class="meal-list mini-meal-list" id="mini-meal-list">
+                            <!-- Populated by JS -->
+                            <div class="empty-state">No meals logged yet.</div>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- View: Meals -->
+            <section id="view-meals" class="app-view hidden-view">
+                <header class="top-bar">
+                    <div class="greeting">
+                        <h1>Meal Diary</h1>
+                        <p>Track your nutrition and health status for everything you eat.</p>
+                    </div>
+                    <button class="btn-primary log-meal-btn-global">
+                        <i class="fa-solid fa-plus"></i> Add New Meal
+                    </button>
+                </header>
+
+                <div class="glass-card full-height-card">
+                    <div class="card-header-flex" style="margin-bottom: 1.5rem;">
+                        <h3>Your Logged Meals</h3>
+                        <div class="filter-pills">
+                            <span class="pill active">All</span>
+                            <span class="pill">Healthy</span>
+                            <span class="pill">Moderate</span>
+                            <span class="pill">Unhealthy</span>
+                        </div>
+                    </div>
+                    
+                    <div class="meal-list-header">
+                        <span>Meal Name</span>
+                        <span>Calories</span>
+                        <span>Macronutrients</span>
+                        <span>Health Status</span>
+                    </div>
+                    
+                    <ul class="meal-list large-meal-list" id="full-meal-list">
+                        <!-- Populated by JS -->
+                    </ul>
+                </div>
+            </section>
+
+            <!-- View: Hydration -->
+            <section id="view-hydration" class="app-view hidden-view">
+                <header class="top-bar">
+                    <div class="greeting">
+                        <h1>Hydration Tracking</h1>
+                        <p>Log your daily water intake to stay healthy.</p>
+                    </div>
+                </header>
+
+                <div class="glass-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 400px;">
+                    <div class="water-count large-water-count">
+                        <span id="water-current">0</span> / <span id="water-goal">8</span> Glasses
+                    </div>
+                    <div class="water-glasses large-glasses" id="water-glasses-container" style="margin: 3rem 0;">
+                        <!-- Generated by JS -->
+                    </div>
+                    <button class="btn-primary" id="add-water-btn" style="padding: 16px 32px; font-size: 1.1rem;">
+                        <i class="fa-solid fa-glass-water"></i> Drink a Glass
+                    </button>
+                </div>
+            </section>
+
+            <!-- View: BMI Calculator -->
+            <section id="view-bmi" class="app-view hidden-view">
+                <header class="top-bar">
+                    <div class="greeting">
+                        <h1>BMI Calculator</h1>
+                        <p>Track your Body Mass Index.</p>
+                    </div>
+                </header>
+
+                <div class="dashboard-grid">
+                    <div class="glass-card">
+                        <h3>Enter Your Details</h3>
+                        <form id="bmi-form" style="margin-top: 1rem;">
+                            <div class="form-group">
+                                <label>Height (cm)</label>
+                                <input type="number" id="bmi-height" placeholder="e.g. 175" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Weight (kg)</label>
+                                <input type="number" id="bmi-weight" placeholder="e.g. 70" required>
+                            </div>
+                            <button type="submit" class="btn-primary full-width" style="margin-top: 1.5rem;">Calculate BMI</button>
+                        </form>
+                    </div>
+                    
+                    <div class="glass-card" style="grid-column: span 2; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <h3>Your Result</h3>
+                        <div class="bmi-result-circle" id="bmi-result-circle">
+                            <span class="bmi-value" id="bmi-value">--</span>
+                        </div>
+                        <h2 id="bmi-category" style="margin-top: 1rem; color: var(--text-primary);">Awaiting Input</h2>
+                        <p id="bmi-description" style="color: var(--text-secondary); margin-top: 0.5rem; text-align: center; max-width: 80%;">
+                            Enter your height and weight to calculate your BMI and see which category you fall into.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- View: AI Analysis -->
+            <section id="view-ai" class="app-view hidden-view">
+                <header class="top-bar">
+                    <div class="greeting">
+                        <h1>AI Health Analysis</h1>
+                        <p>Personalized insights based on your food, habits, and profile.</p>
+                    </div>
+                    <button class="btn-outline" id="refresh-ai-btn">
+                        <i class="fa-solid fa-rotate-right"></i> Refresh Analysis
+                    </button>
+                </header>
+
+                <div class="dashboard-grid">
+                    <div class="glass-card ai-report-card">
+                        <div class="ai-report-icon" style="color: var(--status-good); background: rgba(52,211,153,0.1);">
+                            <i class="fa-solid fa-arrow-trend-up"></i>
+                        </div>
+                        <h3>What to Improve</h3>
+                        <p id="ai-improve">Gathering data...</p>
+                    </div>
+                    
+                    <div class="glass-card ai-report-card">
+                        <div class="ai-report-icon" style="color: var(--status-bad); background: rgba(248,113,113,0.1);">
+                            <i class="fa-solid fa-ban"></i>
+                        </div>
+                        <h3>What to Avoid</h3>
+                        <p id="ai-avoid">Gathering data...</p>
+                    </div>
+                    
+                    <div class="glass-card ai-report-card">
+                        <div class="ai-report-icon" style="color: var(--primary-color); background: rgba(0,242,254,0.1);">
+                            <i class="fa-solid fa-lightbulb"></i>
+                        </div>
+                        <h3>General Tips</h3>
+                        <p id="ai-tips">Gathering data...</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Log Meal Modal -->
+    <div class="modal-overlay" id="meal-modal">
+        <div class="modal glass-card">
+            <div class="modal-header">
+                <h2>Log a Meal</h2>
+                <button class="close-btn" id="close-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="meal-form">
+                <div class="form-group">
+                    <label>Meal Name</label>
+                    <input type="text" id="food-name" list="food-suggestions" placeholder="e.g. Grilled Chicken" required>
+                </div>
+                <div class="form-group">
+                    <label>Quantity (grams)</label>
+                    <input type="number" id="food-quantity" placeholder="100" required>
+                </div>
+                
+                <datalist id="food-suggestions">
+                    <option value="Chicken Breast">
+                    <option value="Salmon">
+                    <option value="Brown Rice">
+                    <option value="Broccoli">
+                    <option value="Avocado">
+                    <option value="Eggs">
+                    <option value="Oatmeal">
+                    <option value="Apple">
+                    <option value="Almonds">
+                    <option value="Cheeseburger">
+                    <option value="Pizza Slice">
+                    <option value="Ice Cream">
+                </datalist>
+                <button type="submit" class="btn-primary full-width" style="margin-top: 2rem;">Save & Evaluate Meal</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Smart Reminders Toast -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
